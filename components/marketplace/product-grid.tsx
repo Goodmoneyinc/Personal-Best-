@@ -2,11 +2,11 @@
 
 import { useMemo, useTransition } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { ExternalLink, PackageOpen } from "lucide-react";
+import { PackageOpen } from "lucide-react";
 
+import { ProductCard } from "@/components/marketplace/product-card";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Product, ProductType } from "@/lib/types";
-import { formatPrice } from "@/lib/types";
 
 type ProductFilter = ProductType | "all";
 
@@ -32,12 +32,6 @@ const skeletonCards = [
   "sixth",
 ] as const;
 
-const productTypeLabels: Record<ProductType, string> = {
-  saas: "Micro SaaS",
-  template: "Template",
-  custom: "Custom Work",
-};
-
 const focusRingClasses =
   "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-gold,var(--color-accent-gold,#C9A84C))]";
 
@@ -47,96 +41,6 @@ function getProductFilter(value: string | null, fallback?: ProductType) {
   }
 
   return fallback ?? "all";
-}
-
-function getProductHref(product: Product) {
-  if (product.stripe_link) {
-    return product.stripe_link;
-  }
-
-  if (product.demo_url) {
-    return product.demo_url;
-  }
-
-  if (product.product_type === "custom") {
-    return "/products/custom-work";
-  }
-
-  return `/products/${product.slug}`;
-}
-
-function isExternalHref(href: string) {
-  return href.startsWith("http://") || href.startsWith("https://");
-}
-
-function ProductCard({ product }: { product: Product }) {
-  const href = getProductHref(product);
-  const isExternal = isExternalHref(href);
-
-  return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-[color-mix(in_srgb,var(--accent-gold,var(--color-accent-gold,#C9A84C))_18%,transparent)] bg-white shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-xl">
-      <div className="aspect-[4/3] overflow-hidden bg-[var(--navy,var(--color-navy,#0A0F1E))]">
-        <img
-          src={product.image_url}
-          alt={`${product.name} preview`}
-          className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
-        />
-      </div>
-
-      <div className="flex flex-1 flex-col p-6">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--accent-gold,var(--color-accent-gold,#C9A84C))]">
-              {productTypeLabels[product.product_type]}
-            </p>
-            <h2 className="mt-2 text-xl font-semibold text-[var(--navy,var(--color-navy,#0A0F1E))]">
-              {product.name}
-            </h2>
-          </div>
-          <p className="shrink-0 rounded-full bg-[var(--warm-white,var(--color-warm-white,#F5F0E8))] px-3 py-1 text-sm font-semibold text-[var(--navy,var(--color-navy,#0A0F1E))]">
-            {formatPrice(
-              product.price,
-              product.is_subscription,
-              product.billing_interval,
-            )}
-          </p>
-        </div>
-
-        <p className="mt-4 text-sm leading-6 text-[var(--slate-gray,var(--color-slate-gray,#64748B))]">
-          {product.short_description || product.description}
-        </p>
-
-        {product.features.length > 0 ? (
-          <ul className="mt-5 space-y-2 text-sm text-[var(--navy,var(--color-navy,#0A0F1E))]">
-            {product.features.slice(0, 3).map((feature) => (
-              <li key={feature} className="flex gap-2">
-                <span
-                  aria-hidden="true"
-                  className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--accent-gold,var(--color-accent-gold,#C9A84C))]"
-                />
-                <span>{feature}</span>
-              </li>
-            ))}
-          </ul>
-        ) : null}
-
-        <div className="mt-6 flex flex-1 items-end">
-          <a
-            href={href}
-            aria-label={`View ${product.name}`}
-            target={isExternal ? "_blank" : undefined}
-            rel={isExternal ? "noopener noreferrer" : undefined}
-            className={`inline-flex items-center gap-2 rounded-md bg-[var(--navy,var(--color-navy,#0A0F1E))] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-gold,var(--color-accent-gold,#C9A84C))] hover:text-[var(--navy,var(--color-navy,#0A0F1E))] ${focusRingClasses}`}
-          >
-            View product
-            {isExternal ? (
-              <ExternalLink aria-hidden="true" className="h-4 w-4" />
-            ) : null}
-          </a>
-        </div>
-      </div>
-    </article>
-  );
 }
 
 function ProductGridSkeleton() {
@@ -258,8 +162,12 @@ export function ProductGrid({
           <ProductGridSkeleton />
         ) : filteredProducts.length > 0 ? (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {filteredProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
+            {filteredProducts.map((product, index) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                priority={index < 3}
+              />
             ))}
           </div>
         ) : (
