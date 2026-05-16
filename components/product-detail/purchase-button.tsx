@@ -68,6 +68,7 @@ export function PurchaseButton({ product }: PurchaseButtonProps) {
             productName: product.name,
             productId: product.id,
             productSlug: product.slug,
+            productType: product.product_type,
           }),
         });
 

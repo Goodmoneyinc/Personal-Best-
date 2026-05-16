@@ -6,6 +6,7 @@ type CreateCheckoutRequest = {
   productName?: unknown;
   productId?: unknown;
   productSlug?: unknown;
+  productType?: unknown;
 };
 
 function getString(value: unknown) {
@@ -73,6 +74,7 @@ export async function POST(request: Request) {
     const priceId = getString(body.priceId);
     const productName = getString(body.productName);
     const productId = getString(body.productId);
+    const productType = getString(body.productType);
     const productSlug =
       getString(body.productSlug) || slugify(productName) || productId;
 
@@ -109,6 +111,8 @@ export async function POST(request: Request) {
         : `${siteUrl}/products`,
       metadata: {
         productId,
+        productName,
+        productType,
         fulatelier: "true",
       },
       allow_promotion_codes: true,
