@@ -65,7 +65,9 @@ export function PurchaseButton({ product }: PurchaseButtonProps) {
           },
           body: JSON.stringify({
             priceId: product.stripe_price_id,
+            productName: product.name,
             productId: product.id,
+            productSlug: product.slug,
           }),
         });
 
