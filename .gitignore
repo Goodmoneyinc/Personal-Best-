@@ -1,0 +1,15 @@
+# Local environment files can contain service-role and payment secrets.
+.env
+.env.*
+!.env.example
+
+# Next.js build output
+.next/
+out/
+
+# Dependencies and logs
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
