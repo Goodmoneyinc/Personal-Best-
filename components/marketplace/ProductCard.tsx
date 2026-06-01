@@ -1,5 +1,6 @@
 import Image from 'next/image';
 
+import { Badge } from '@/components/ui/badge';
 import { ButtonLink } from '@/components/ui/button';
 import { formatPrice, type Product } from '@/lib/types';
 
@@ -29,9 +30,7 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
       </div>
       <div className="flex flex-1 flex-col p-6">
         <div className="flex flex-wrap items-center gap-3">
-          <span className="rounded-full bg-gold/20 px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-[#6F5921]">
-            {typeLabels[product.product_type]}
-          </span>
+          <Badge>{typeLabels[product.product_type]}</Badge>
           <span className="text-sm font-semibold text-slate">{product.category}</span>
         </div>
         <h3 className="mt-5 font-display text-2xl font-bold text-navy">

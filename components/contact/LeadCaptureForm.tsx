@@ -3,6 +3,9 @@
 import { FormEvent, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Select } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 import { getSupabaseBrowserClient } from '@/lib/supabase/client';
 
 type SubmitState = 'idle' | 'submitting' | 'success' | 'error';
@@ -12,7 +15,7 @@ function getFormValue(formData: FormData, key: string) {
   return typeof value === 'string' ? value.trim() : '';
 }
 
-export function LeadForm() {
+export function LeadCaptureForm() {
   const [submitState, setSubmitState] = useState<SubmitState>('idle');
   const [message, setMessage] = useState('');
 
@@ -71,91 +74,56 @@ export function LeadForm() {
           <label className="text-sm font-semibold text-navy" htmlFor="name">
             Name
           </label>
-          <input
-            className="mt-2 min-h-12 w-full rounded-xl border border-navy/20 bg-warm px-4 text-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
-            id="name"
-            name="name"
-            required
-            type="text"
-          />
+          <Input id="name" name="name" required type="text" />
         </div>
         <div>
           <label className="text-sm font-semibold text-navy" htmlFor="email">
             Email
           </label>
-          <input
-            className="mt-2 min-h-12 w-full rounded-xl border border-navy/20 bg-warm px-4 text-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
-            id="email"
-            name="email"
-            required
-            type="email"
-          />
+          <Input id="email" name="email" required type="email" />
         </div>
         <div>
           <label className="text-sm font-semibold text-navy" htmlFor="phone">
             Phone
           </label>
-          <input
-            className="mt-2 min-h-12 w-full rounded-xl border border-navy/20 bg-warm px-4 text-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
-            id="phone"
-            name="phone"
-            type="tel"
-          />
+          <Input id="phone" name="phone" type="tel" />
         </div>
         <div>
           <label className="text-sm font-semibold text-navy" htmlFor="company">
             Company or organization
           </label>
-          <input
-            className="mt-2 min-h-12 w-full rounded-xl border border-navy/20 bg-warm px-4 text-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
-            id="company"
-            name="company"
-            type="text"
-          />
+          <Input id="company" name="company" type="text" />
         </div>
         <div>
           <label className="text-sm font-semibold text-navy" htmlFor="budget_range">
             Budget range
           </label>
-          <select
-            className="mt-2 min-h-12 w-full rounded-xl border border-navy/20 bg-warm px-4 text-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
-            id="budget_range"
-            name="budget_range"
-          >
+          <Select id="budget_range" name="budget_range">
             <option value="">Select a range</option>
             <option value="$500-$1,500">$500-$1,500</option>
             <option value="$1,500-$5,000">$1,500-$5,000</option>
             <option value="$5,000-$12,000">$5,000-$12,000</option>
             <option value="$12,000+">$12,000+</option>
-          </select>
+          </Select>
         </div>
         <div>
           <label className="text-sm font-semibold text-navy" htmlFor="timeline">
             Ideal timeline
           </label>
-          <select
-            className="mt-2 min-h-12 w-full rounded-xl border border-navy/20 bg-warm px-4 text-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
-            id="timeline"
-            name="timeline"
-          >
+          <Select id="timeline" name="timeline">
             <option value="">Select a timeline</option>
             <option value="This month">This month</option>
             <option value="Next 60 days">Next 60 days</option>
             <option value="This quarter">This quarter</option>
             <option value="Exploring options">Exploring options</option>
-          </select>
+          </Select>
         </div>
       </div>
       <div className="mt-5">
         <label className="text-sm font-semibold text-navy" htmlFor="project_details">
           Project details
         </label>
-        <textarea
-          className="mt-2 min-h-36 w-full rounded-xl border border-navy/20 bg-warm px-4 py-3 text-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
-          id="project_details"
-          name="project_details"
-          required
-        />
+        <Textarea id="project_details" name="project_details" required />
       </div>
       <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <p

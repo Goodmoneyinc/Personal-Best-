@@ -1,4 +1,4 @@
-import { ProductCard } from '@/components/product-card';
+import { ProductGrid } from '@/components/marketplace/ProductGrid';
 import { getActiveProducts } from '@/lib/data/products';
 
 const products = getActiveProducts();
@@ -53,11 +53,7 @@ export default function ProductsPage() {
             for Stripe or Supabase when a workflow needs payments or data.
           </p>
         </div>
-        <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {products.map((product, index) => (
-            <ProductCard key={product.id} priority={index < 2} product={product} />
-          ))}
-        </div>
+        <ProductGrid className="mt-10" products={products} />
       </section>
     </>
   );

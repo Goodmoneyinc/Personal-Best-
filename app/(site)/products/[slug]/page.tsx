@@ -2,6 +2,8 @@ import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 
+import { PurchaseButton } from '@/components/product-detail/PurchaseButton';
+import { VideoPlayer } from '@/components/product-detail/VideoPlayer';
 import { ButtonLink } from '@/components/ui/button';
 import { getActiveProducts, getProductBySlug } from '@/lib/data/products';
 import { formatPrice, type Product } from '@/lib/types';
@@ -46,9 +48,6 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
     notFound();
   }
 
-  const purchaseHref = product.stripe_link ?? '/contact';
-  const purchaseLabel = product.stripe_link ? 'Buy now' : 'Request this product';
-
   return (
     <>
       <section className="bg-navy px-6 py-16 text-warm lg:px-8" aria-labelledby="product-title">
@@ -76,13 +75,8 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
             <p className="mt-7 font-display text-4xl font-bold text-gold">
               {formatPrice(product.price, product.is_subscription, product.billing_interval)}
             </p>
-            <div className="mt-8 flex flex-col gap-4 sm:flex-row">
-              <ButtonLink
-                href={purchaseHref}
-                target={product.stripe_link ? '_blank' : undefined}
-              >
-                {purchaseLabel}
-              </ButtonLink>
+            <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-start">
+              <PurchaseButton product={product} />
               {product.demo_url ? (
                 <ButtonLink href={product.demo_url} target="_blank" variant="ghost">
                   View demo
@@ -118,6 +112,10 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
             ))}
           </ul>
         </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-6 pb-16 lg:px-8" aria-label="Product video">
+        <VideoPlayer demoUrl={product.demo_url} title={product.name} videoUrl={product.demo_video_url} />
       </section>
     </>
   );

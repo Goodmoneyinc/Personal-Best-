@@ -1,4 +1,4 @@
-import { LeadForm } from '@/components/lead-form';
+import { LeadCaptureForm } from '@/components/contact/LeadCaptureForm';
 
 export const metadata = {
   title: 'Start a project',
@@ -47,7 +47,7 @@ export default function ContactPage() {
             </ul>
           </div>
         </div>
-        <LeadForm />
+        <LeadCaptureForm />
       </section>
     </>
   );

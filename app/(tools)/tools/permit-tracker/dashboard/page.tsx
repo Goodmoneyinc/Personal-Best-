@@ -1,4 +1,4 @@
-import { PermitTrackerDashboard } from '@/components/permit-tracker-dashboard';
+import { PermitTrackerDashboard } from './PermitTrackerDashboard';
 
 export const metadata = {
   title: 'Permit Tracker dashboard',

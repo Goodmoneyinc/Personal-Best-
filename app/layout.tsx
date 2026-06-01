@@ -1,8 +1,9 @@
 import type { Metadata } from 'next';
 import { Inter, Playfair_Display } from 'next/font/google';
 
-import { SiteFooter } from '@/components/site-footer';
-import { SiteHeader } from '@/components/site-header';
+import { SiteFooter } from '@/components/layout/SiteFooter';
+import { SiteHeader } from '@/components/layout/SiteHeader';
+import { SkipNav } from '@/components/layout/SkipNav';
 import './globals.css';
 
 const inter = Inter({
@@ -32,12 +33,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} ${playfair.variable} font-body antialiased`}>
-        <a
-          className="sr-only z-50 rounded-full bg-gold px-4 py-3 font-semibold text-navy focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-navy"
-          href="#main-content"
-        >
-          Skip to main content
-        </a>
+        <SkipNav />
         <SiteHeader />
         <main id="main-content">{children}</main>
         <SiteFooter />

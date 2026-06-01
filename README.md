@@ -29,6 +29,21 @@ to persist lead inquiries.
 - `npm run build` - build the full production app for Vercel
 - `npm run build:public` - export static public pages for Surge
 
+
+## Component architecture
+
+```
+components/
+  layout/          SiteHeader, SiteFooter, SkipNav
+  home/            HeroSection, FeaturedProducts, BuildLogPreview, ContactCTA
+  marketplace/     ProductGrid, ProductCard
+  product-detail/  PurchaseButton, VideoPlayer
+  admin/           AdminShell, ProductManager, LeadPipeline, A11yChecklist
+  contact/         LeadCaptureForm
+  video/           BuildLogFeed, VideoCard
+  ui/              shadcn-style primitives such as Button, Badge, Card, Input
+```
+
 ## Static public export
 
 Vercel is the primary deployment target. For Surge-only public pages, build with
