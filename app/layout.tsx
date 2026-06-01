@@ -3,7 +3,6 @@ import { Inter, Playfair_Display } from 'next/font/google';
 
 import { SiteFooter } from '@/components/layout/SiteFooter';
 import { SiteHeader } from '@/components/layout/SiteHeader';
-import { SkipNav } from '@/components/layout/SkipNav';
 import './globals.css';
 
 const inter = Inter({
@@ -33,7 +32,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} ${playfair.variable} font-body antialiased`}>
-        <SkipNav />
         <SiteHeader />
         <main id="main-content">{children}</main>
         <SiteFooter />
