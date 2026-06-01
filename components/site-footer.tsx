@@ -24,6 +24,16 @@ export function SiteFooter() {
               </Link>
             </li>
             <li>
+              <Link className="rounded-sm hover:text-gold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold" href="/build-log">
+                Build log
+              </Link>
+            </li>
+            <li>
+              <Link className="rounded-sm hover:text-gold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold" href="/tools/permit-tracker">
+                Permit Tracker
+              </Link>
+            </li>
+            <li>
               <Link className="rounded-sm hover:text-gold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold" href="/contact">
                 Custom build intake
               </Link>

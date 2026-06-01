@@ -4,6 +4,8 @@ import { ButtonLink } from '@/components/ui/button';
 
 const navItems = [
   { href: '/products', label: 'Marketplace' },
+  { href: '/build-log', label: 'Build log' },
+  { href: '/tools/permit-tracker', label: 'Permit tracker' },
   { href: '/contact', label: 'Custom builds' },
 ];
 
@@ -20,7 +22,7 @@ export function SiteHeader() {
         >
           Fulatelier
         </Link>
-        <div className="hidden items-center gap-7 md:flex">
+        <div className="hidden items-center gap-5 lg:flex">
           {navItems.map((item) => (
             <Link
               className="rounded-sm text-sm font-semibold text-navy transition hover:text-[#6F5921] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"

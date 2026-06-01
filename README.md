@@ -26,7 +26,8 @@ to persist lead inquiries.
 - `npm run dev` - start local development
 - `npm run lint` - run Next.js lint checks
 - `npm run typecheck` - run TypeScript without emitting files
-- `npm run build` - build the production app
+- `npm run build` - build the full production app for Vercel
+- `npm run build:public` - export static public pages for Surge
 
 ## Static public export
 
