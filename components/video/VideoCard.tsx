@@ -1,0 +1,51 @@
+import Image from 'next/image';
+import Link from 'next/link';
+
+import type { Product, VideoLog } from '@/lib/types';
+
+interface VideoCardProps {
+  entry: VideoLog & {
+    product?: Product;
+  };
+}
+
+export function VideoCard({ entry }: VideoCardProps) {
+  return (
+    <article className="overflow-hidden rounded-[2rem] border border-navy/10 bg-white/85 shadow-card transition duration-300 hover:-translate-y-1 hover:shadow-glow">
+      <div className="relative aspect-video bg-navy">
+        <Image
+          alt={`${entry.title} video thumbnail`}
+          className="object-cover"
+          fill
+          src={entry.thumbnail_url}
+          sizes="(min-width: 768px) 50vw, 100vw"
+        />
+      </div>
+      <div className="p-6">
+        <p className="text-sm font-bold uppercase tracking-[0.18em] text-[#6F5921]">
+          {entry.views.toLocaleString()} views
+        </p>
+        <h3 className="mt-3 font-display text-2xl font-bold text-navy">
+          {entry.title}
+        </h3>
+        <p className="mt-3 text-sm leading-6 text-ink/75">{entry.description}</p>
+        <div className="mt-5 flex flex-wrap gap-3">
+          <Link
+            className="rounded-full border border-navy/20 bg-warm px-4 py-2 text-sm font-semibold text-navy transition hover:-translate-y-0.5 hover:border-gold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
+            href={entry.video_url}
+          >
+            Watch walkthrough
+          </Link>
+          {entry.product ? (
+            <Link
+              className="rounded-full border border-navy/20 bg-white px-4 py-2 text-sm font-semibold text-navy transition hover:-translate-y-0.5 hover:border-gold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
+              href={`/products/${entry.product.slug}`}
+            >
+              View linked product
+            </Link>
+          ) : null}
+        </div>
+      </div>
+    </article>
+  );
+}

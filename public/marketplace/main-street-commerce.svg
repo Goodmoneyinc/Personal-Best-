@@ -1,0 +1,19 @@
+<svg width="960" height="720" viewBox="0 0 960 720" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Main Street Commerce preview</title>
+  <desc id="desc">A boutique storefront layout with product tiles and deep navy panels.</desc>
+  <rect width="960" height="720" fill="#F5F0E8"/>
+  <rect x="122" y="96" width="716" height="528" rx="48" fill="#0A0F1E"/>
+  <rect x="180" y="156" width="220" height="30" rx="15" fill="#C9A84C"/>
+  <rect x="180" y="220" width="600" height="120" rx="32" fill="#F5F0E8"/>
+  <rect x="224" y="260" width="230" height="18" rx="9" fill="#0A0F1E"/>
+  <rect x="224" y="296" width="150" height="18" rx="9" fill="#64748B" fill-opacity="0.45"/>
+  <rect x="180" y="382" width="176" height="168" rx="28" fill="#FFFFFF"/>
+  <rect x="392" y="382" width="176" height="168" rx="28" fill="#FFFFFF"/>
+  <rect x="604" y="382" width="176" height="168" rx="28" fill="#FFFFFF"/>
+  <circle cx="268" cy="444" r="38" fill="#C9A84C" fill-opacity="0.74"/>
+  <circle cx="480" cy="444" r="38" fill="#C9A84C" fill-opacity="0.74"/>
+  <circle cx="692" cy="444" r="38" fill="#C9A84C" fill-opacity="0.74"/>
+  <rect x="222" y="506" width="92" height="14" rx="7" fill="#0A0F1E"/>
+  <rect x="434" y="506" width="92" height="14" rx="7" fill="#0A0F1E"/>
+  <rect x="646" y="506" width="92" height="14" rx="7" fill="#0A0F1E"/>
+</svg>
