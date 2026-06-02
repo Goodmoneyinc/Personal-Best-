@@ -1,23 +1,77 @@
 import { NextResponse, type NextRequest } from 'next/server';
 
-export function requireAdminApiToken(request: NextRequest): NextResponse | null {
-  const expectedToken = process.env.ADMIN_API_TOKEN;
+import { adminSupabase } from '@/lib/supabase/admin';
+import {
+  getSupabaseRouteClient,
+  getSupabaseServerClient,
+} from '@/lib/supabase/server';
 
-  if (!expectedToken) {
+type AdminUserRow = {
+  email: string;
+};
+
+async function isAdminEmail(email: string) {
+  const { data, error } = await adminSupabase
+    .from('admin_users')
+    .select('email')
+    .eq('email', email)
+    .maybeSingle()
+    .overrideTypes<AdminUserRow, { merge: false }>();
+
+  if (error) {
+    console.error('Unable to verify admin user:', error);
+    return false;
+  }
+
+  return Boolean(data);
+}
+
+export async function getServerAdminEmail() {
+  const supabase = getSupabaseServerClient();
+
+  if (!supabase) {
+    return null;
+  }
+
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (!session?.user.email) {
+    return null;
+  }
+
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+
+  if (error || !user?.email) {
+    return null;
+  }
+
+  return (await isAdminEmail(user.email)) ? user.email : null;
+}
+
+export async function requireAdminRequest(request: NextRequest): Promise<NextResponse | null> {
+  const supabase = getSupabaseRouteClient(request);
+
+  if (!supabase) {
     return NextResponse.json(
-      { error: 'Admin API token is not configured.' },
+      { error: 'Supabase admin auth is not configured.' },
       { status: 503 },
     );
   }
 
-  const authorization = request.headers.get('authorization');
-  const providedToken = authorization?.startsWith('Bearer ')
-    ? authorization.slice('Bearer '.length)
-    : null;
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
 
-  if (providedToken !== expectedToken) {
+  if (error || !user?.email || !(await isAdminEmail(user.email))) {
     return NextResponse.json({ error: 'Unauthorized admin request.' }, { status: 401 });
   }
 
   return null;
 }
+

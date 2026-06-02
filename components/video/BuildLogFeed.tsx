@@ -1,15 +1,11 @@
 import { VideoCard } from '@/components/video/VideoCard';
-import type { Product, VideoLog } from '@/lib/types';
+import type { VideoLog } from '@/lib/types';
 
 interface BuildLogFeedProps {
-  entries: Array<
-    VideoLog & {
-      product?: Product;
-    }
-  >;
+  videos: VideoLog[];
 }
 
-export function BuildLogFeed({ entries }: BuildLogFeedProps) {
+export function BuildLogFeed({ videos }: BuildLogFeedProps) {
   return (
     <section aria-labelledby="build-log-list-title" className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
       <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
@@ -27,11 +23,17 @@ export function BuildLogFeed({ entries }: BuildLogFeedProps) {
         </p>
       </div>
 
-      <div className="mt-10 grid gap-6 md:grid-cols-2">
-        {entries.map((entry) => (
-          <VideoCard entry={entry} key={entry.id} />
-        ))}
-      </div>
+      {videos.length > 0 ? (
+        <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {videos.map((video) => (
+            <VideoCard entry={video} key={video.id} />
+          ))}
+        </div>
+      ) : (
+        <p className="mt-10 rounded-[2rem] border border-navy/10 bg-white/80 p-6 text-sm leading-6 text-ink/75" role="status">
+          Build log videos are being prepared. Please check back soon.
+        </p>
+      )}
     </section>
   );
 }

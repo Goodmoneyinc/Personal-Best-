@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server';
 
-import { requireAdminApiToken } from '@/lib/admin-auth';
-import { getSupabaseServiceRoleClient } from '@/lib/supabase/server';
+import { requireAdminRequest } from '@/lib/admin-auth';
+import { adminSupabase } from '@/lib/supabase/admin';
 
 export const runtime = 'nodejs';
 
@@ -13,24 +13,15 @@ interface LeadRouteContext {
 }
 
 export async function PATCH(request: NextRequest, { params }: LeadRouteContext) {
-  const unauthorized = requireAdminApiToken(request);
+  const unauthorized = await requireAdminRequest(request);
 
   if (unauthorized) {
     return unauthorized;
   }
 
   try {
-    const supabase = getSupabaseServiceRoleClient();
-
-    if (!supabase) {
-      return NextResponse.json(
-        { error: 'Supabase service role is not configured.' },
-        { status: 503 },
-      );
-    }
-
     const payload: unknown = await request.json();
-    const { data, error } = await supabase
+    const { data, error } = await adminSupabase
       .from('leads')
       .update(payload as Record<string, unknown>)
       .eq('id', params.id)

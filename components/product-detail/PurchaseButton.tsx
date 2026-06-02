@@ -3,31 +3,33 @@
 import { useState } from 'react';
 
 import { Button, ButtonLink } from '@/components/ui/button';
-import type { Product } from '@/lib/types';
 
 interface PurchaseButtonProps {
-  product: Product;
+  stripe_price_id?: string | null;
+  stripe_link?: string | null;
 }
 
-export function PurchaseButton({ product }: PurchaseButtonProps) {
-  const [status, setStatus] = useState('');
+export function PurchaseButton({ stripe_link, stripe_price_id }: PurchaseButtonProps) {
+  const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  if (product.stripe_link) {
+  if (stripe_link) {
     return (
-      <ButtonLink href={product.stripe_link} target="_blank">
+      <ButtonLink href={stripe_link} rel="noopener noreferrer" target="_blank">
         Buy now
       </ButtonLink>
     );
   }
 
-  if (!product.stripe_price_id) {
+  if (!stripe_price_id) {
     return <ButtonLink href="/contact">Request this product</ButtonLink>;
   }
 
+  const priceId = stripe_price_id;
+
   async function handleCheckout() {
     setIsLoading(true);
-    setStatus('Creating secure checkout session...');
+    setErrorMessage('');
 
     try {
       const response = await fetch('/api/create-checkout', {
@@ -35,11 +37,24 @@ export function PurchaseButton({ product }: PurchaseButtonProps) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ productId: product.id }),
+        body: JSON.stringify({ priceId }),
       });
       const data: unknown = await response.json();
 
-      if (!response.ok || typeof data !== 'object' || data === null || !('url' in data)) {
+      if (!response.ok) {
+        const apiError =
+          typeof data === 'object' && data !== null && 'error' in data
+            ? (data as { error?: unknown }).error
+            : null;
+
+        throw new Error(
+          typeof apiError === 'string'
+            ? apiError
+            : 'Unable to start checkout for this product.',
+        );
+      }
+
+      if (typeof data !== 'object' || data === null || !('url' in data)) {
         throw new Error('Unable to start checkout for this product.');
       }
 
@@ -51,7 +66,7 @@ export function PurchaseButton({ product }: PurchaseButtonProps) {
 
       window.location.assign(checkoutUrl);
     } catch (error) {
-      setStatus(
+      setErrorMessage(
         error instanceof Error
           ? error.message
           : 'Unable to start checkout for this product.',
@@ -62,12 +77,25 @@ export function PurchaseButton({ product }: PurchaseButtonProps) {
 
   return (
     <div className="flex flex-col gap-3">
-      <Button disabled={isLoading} onClick={handleCheckout} type="button">
-        {isLoading ? 'Starting checkout...' : 'Buy now'}
+      <Button aria-busy={isLoading} disabled={isLoading} onClick={handleCheckout} type="button">
+        {isLoading ? (
+          <span className="inline-flex items-center gap-2">
+            <span
+              aria-hidden="true"
+              className="h-4 w-4 animate-spin rounded-full border-2 border-navy/30 border-t-navy"
+            />
+            Starting checkout...
+            <span className="sr-only">Processing...</span>
+          </span>
+        ) : (
+          'Buy now'
+        )}
       </Button>
-      <p aria-live="polite" className="text-sm font-semibold text-warm/80" role="status">
-        {status}
-      </p>
+      {errorMessage ? (
+        <p className="text-sm font-semibold text-[#F7B5A5]" role="alert">
+          {errorMessage}
+        </p>
+      ) : null}
     </div>
   );
 }

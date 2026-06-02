@@ -20,7 +20,7 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
     <article className="group flex h-full flex-col overflow-hidden rounded-[2rem] border border-navy/10 bg-white/80 shadow-card transition duration-300 hover:-translate-y-1 hover:shadow-glow">
       <div className="relative aspect-[4/3] overflow-hidden bg-navy">
         <Image
-          alt={`${product.name} marketplace preview`}
+          alt={`Preview image for ${product.name}, a Fulatelier ${typeLabels[product.product_type]} product`}
           className="object-cover transition duration-500 group-hover:scale-105"
           fill
           priority={priority}
@@ -30,7 +30,9 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
       </div>
       <div className="flex flex-1 flex-col p-6">
         <div className="flex flex-wrap items-center gap-3">
-          <Badge>{typeLabels[product.product_type]}</Badge>
+          <Badge className="border border-gold/30 bg-gold/20 text-[#6F5921]">
+            {typeLabels[product.product_type]}
+          </Badge>
           <span className="text-sm font-semibold text-slate">{product.category}</span>
         </div>
         <h3 className="mt-5 font-display text-2xl font-bold text-navy">

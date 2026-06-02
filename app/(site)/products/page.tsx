@@ -1,7 +1,6 @@
 import { ProductGrid } from '@/components/marketplace/ProductGrid';
-import { getActiveProducts } from '@/lib/data/products';
-
-const products = getActiveProducts();
+import { getProducts } from '@/lib/supabase/queries';
+import type { Product } from '@/lib/types';
 
 export const metadata = {
   title: 'Marketplace',
@@ -9,7 +8,16 @@ export const metadata = {
     'Browse Fulatelier templates, SaaS starters, and custom build offers for Mississippi businesses.',
 };
 
-export default function ProductsPage() {
+export default async function ProductsPage() {
+  let products: Product[] = [];
+  let productsError = false;
+
+  try {
+    products = await getProducts();
+  } catch {
+    productsError = true;
+  }
+
   const categories = Array.from(new Set(products.map((product) => product.category)));
 
   return (
@@ -53,7 +61,13 @@ export default function ProductsPage() {
             for Stripe or Supabase when a workflow needs payments or data.
           </p>
         </div>
-        <ProductGrid className="mt-10" products={products} />
+        {productsError ? (
+          <p className="mt-10 rounded-[2rem] border border-[#8A3A2B]/30 bg-[#FFF6F2] p-6 text-sm font-semibold leading-6 text-[#7A2E23]" role="status">
+            Marketplace products could not be loaded right now. Please refresh the page or contact Fulatelier.
+          </p>
+        ) : (
+          <ProductGrid className="mt-10" products={products} />
+        )}
       </section>
     </>
   );
