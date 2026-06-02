@@ -1,19 +1,13 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import Stripe from 'stripe';
 
-import { getSupabaseServiceRoleClient } from '@/lib/supabase/server';
+import { adminSupabase } from '@/lib/supabase/admin';
 import { getStripeServerClient } from '@/lib/stripe/server';
 
 export const runtime = 'nodejs';
 
 async function upsertCompletedCheckout(session: Stripe.Checkout.Session) {
-  const supabase = getSupabaseServiceRoleClient();
-
-  if (!supabase) {
-    throw new Error('Supabase service role is not configured.');
-  }
-
-  const { error } = await supabase.from('orders').upsert(
+  const { error } = await adminSupabase.from('orders').upsert(
     {
       stripe_checkout_session_id: session.id,
       stripe_customer_id:

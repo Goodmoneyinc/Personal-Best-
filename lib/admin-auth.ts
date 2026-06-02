@@ -1,8 +1,8 @@
 import { NextResponse, type NextRequest } from 'next/server';
 
+import { adminSupabase } from '@/lib/supabase/admin';
 import {
   getSupabaseRouteClient,
-  getSupabaseServiceRoleClient,
   getSupabaseServerClient,
 } from '@/lib/supabase/server';
 
@@ -11,13 +11,7 @@ type AdminUserRow = {
 };
 
 async function isAdminEmail(email: string) {
-  const supabase = getSupabaseServiceRoleClient();
-
-  if (!supabase) {
-    return false;
-  }
-
-  const { data, error } = await supabase
+  const { data, error } = await adminSupabase
     .from('admin_users')
     .select('email')
     .eq('email', email)

@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server';
 
 import { requireAdminRequest } from '@/lib/admin-auth';
-import { getSupabaseServiceRoleClient } from '@/lib/supabase/server';
+import { adminSupabase } from '@/lib/supabase/admin';
 
 export const runtime = 'nodejs';
 
@@ -20,17 +20,8 @@ export async function PATCH(request: NextRequest, { params }: ProductRouteContex
   }
 
   try {
-    const supabase = getSupabaseServiceRoleClient();
-
-    if (!supabase) {
-      return NextResponse.json(
-        { error: 'Supabase service role is not configured.' },
-        { status: 503 },
-      );
-    }
-
     const payload: unknown = await request.json();
-    const { data, error } = await supabase
+    const { data, error } = await adminSupabase
       .from('products')
       .update(payload as Record<string, unknown>)
       .eq('id', params.id)
@@ -61,16 +52,7 @@ export async function DELETE(request: NextRequest, { params }: ProductRouteConte
   }
 
   try {
-    const supabase = getSupabaseServiceRoleClient();
-
-    if (!supabase) {
-      return NextResponse.json(
-        { error: 'Supabase service role is not configured.' },
-        { status: 503 },
-      );
-    }
-
-    const { error } = await supabase.from('products').delete().eq('id', params.id);
+    const { error } = await adminSupabase.from('products').delete().eq('id', params.id);
 
     if (error) {
       throw error;
