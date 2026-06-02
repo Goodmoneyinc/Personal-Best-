@@ -74,7 +74,7 @@ export async function FeaturedProducts() {
 
     return (
       <FeaturedProductsSection>
-        <ProductGrid className="mt-10 md:grid-cols-3" products={products} priorityCount={1} />
+        <ProductGrid className="mt-10" products={products} priorityCount={1} showFilters={false} />
       </FeaturedProductsSection>
     );
   } catch {

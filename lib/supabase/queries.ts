@@ -1,5 +1,5 @@
 import { getSupabaseServiceRoleClient } from '@/lib/supabase/server';
-import type { Product, VideoLog } from '@/lib/types';
+import type { Product, ProductType, VideoLog } from '@/lib/types';
 
 const productColumns = `
   id,
@@ -84,6 +84,32 @@ export async function getFeaturedProducts(): Promise<Product[]> {
   } catch (error) {
     logSupabaseError('Unable to fetch featured products from Supabase:', error);
     throw new Error('Unable to load featured products.');
+  }
+}
+
+export async function getProducts(type?: ProductType): Promise<Product[]> {
+  try {
+    const supabase = getServerClient();
+    let query = supabase
+      .from('products')
+      .select(productColumns)
+      .eq('is_active', true)
+      .order('order_index', { ascending: true });
+
+    if (type) {
+      query = query.eq('product_type', type);
+    }
+
+    const { data, error } = await query.overrideTypes<Product[], { merge: false }>();
+
+    if (error) {
+      throw error;
+    }
+
+    return data ?? [];
+  } catch (error) {
+    logSupabaseError('Unable to fetch products from Supabase:', error);
+    throw new Error('Unable to load products.');
   }
 }
 
