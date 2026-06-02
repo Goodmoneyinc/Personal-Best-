@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server';
 
-import { requireAdminApiToken } from '@/lib/admin-auth';
+import { requireAdminRequest } from '@/lib/admin-auth';
 import { getSupabaseServiceRoleClient } from '@/lib/supabase/server';
 
 export const runtime = 'nodejs';
@@ -13,7 +13,7 @@ interface LeadRouteContext {
 }
 
 export async function PATCH(request: NextRequest, { params }: LeadRouteContext) {
-  const unauthorized = requireAdminApiToken(request);
+  const unauthorized = await requireAdminRequest(request);
 
   if (unauthorized) {
     return unauthorized;

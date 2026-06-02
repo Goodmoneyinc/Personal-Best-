@@ -1,12 +1,12 @@
 import { NextResponse, type NextRequest } from 'next/server';
 
-import { requireAdminApiToken } from '@/lib/admin-auth';
+import { requireAdminRequest } from '@/lib/admin-auth';
 import { getSupabaseServiceRoleClient } from '@/lib/supabase/server';
 
 export const runtime = 'nodejs';
 
 export async function GET(request: NextRequest) {
-  const unauthorized = requireAdminApiToken(request);
+  const unauthorized = await requireAdminRequest(request);
 
   if (unauthorized) {
     return unauthorized;
@@ -44,7 +44,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const unauthorized = requireAdminApiToken(request);
+  const unauthorized = await requireAdminRequest(request);
 
   if (unauthorized) {
     return unauthorized;

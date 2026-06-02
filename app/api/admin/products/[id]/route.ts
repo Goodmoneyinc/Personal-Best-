@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server';
 
-import { requireAdminApiToken } from '@/lib/admin-auth';
+import { requireAdminRequest } from '@/lib/admin-auth';
 import { getSupabaseServiceRoleClient } from '@/lib/supabase/server';
 
 export const runtime = 'nodejs';
@@ -13,7 +13,7 @@ interface ProductRouteContext {
 }
 
 export async function PATCH(request: NextRequest, { params }: ProductRouteContext) {
-  const unauthorized = requireAdminApiToken(request);
+  const unauthorized = await requireAdminRequest(request);
 
   if (unauthorized) {
     return unauthorized;
@@ -53,8 +53,8 @@ export async function PATCH(request: NextRequest, { params }: ProductRouteContex
   }
 }
 
-export async function DELETE(_request: NextRequest, { params }: ProductRouteContext) {
-  const unauthorized = requireAdminApiToken(_request);
+export async function DELETE(request: NextRequest, { params }: ProductRouteContext) {
+  const unauthorized = await requireAdminRequest(request);
 
   if (unauthorized) {
     return unauthorized;

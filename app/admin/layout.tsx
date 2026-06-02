@@ -1,5 +1,16 @@
-import { AdminShell } from '@/components/admin/AdminShell';
+import { redirect } from 'next/navigation';
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+import { AdminShell } from '@/components/admin/AdminShell';
+import { getServerAdminEmail } from '@/lib/admin-auth';
+
+export const dynamic = 'force-dynamic';
+
+export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+  const adminEmail = await getServerAdminEmail();
+
+  if (!adminEmail) {
+    redirect('/');
+  }
+
   return <AdminShell>{children}</AdminShell>;
 }
