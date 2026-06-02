@@ -40,14 +40,29 @@ const videoLogColumns = `
   created_at
 `;
 
+class SupabaseConfigurationError extends Error {
+  constructor() {
+    super('Supabase server client is not configured.');
+    this.name = 'SupabaseConfigurationError';
+  }
+}
+
 function getServerClient() {
   const supabase = getSupabaseServiceRoleClient();
 
   if (!supabase) {
-    throw new Error('Supabase server client is not configured.');
+    throw new SupabaseConfigurationError();
   }
 
   return supabase;
+}
+
+function logSupabaseError(message: string, error: unknown) {
+  if (error instanceof SupabaseConfigurationError) {
+    return;
+  }
+
+  console.error(message, error);
 }
 
 export async function getFeaturedProducts(): Promise<Product[]> {
@@ -67,7 +82,7 @@ export async function getFeaturedProducts(): Promise<Product[]> {
 
     return data ?? [];
   } catch (error) {
-    console.error('Unable to fetch featured products from Supabase:', error);
+    logSupabaseError('Unable to fetch featured products from Supabase:', error);
     throw new Error('Unable to load featured products.');
   }
 }
@@ -90,7 +105,7 @@ export async function getLatestVideoLogs(limit: number): Promise<VideoLog[]> {
 
     return data ?? [];
   } catch (error) {
-    console.error('Unable to fetch video logs from Supabase:', error);
+    logSupabaseError('Unable to fetch video logs from Supabase:', error);
     throw new Error('Unable to load video logs.');
   }
 }
