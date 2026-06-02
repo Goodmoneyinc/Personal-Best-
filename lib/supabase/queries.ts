@@ -113,6 +113,28 @@ export async function getProducts(type?: ProductType): Promise<Product[]> {
   }
 }
 
+export async function getProductBySlug(slug: string): Promise<Product | null> {
+  try {
+    const supabase = getServerClient();
+    const { data, error } = await supabase
+      .from('products')
+      .select(productColumns)
+      .eq('slug', slug)
+      .eq('is_active', true)
+      .maybeSingle()
+      .overrideTypes<Product, { merge: false }>();
+
+    if (error) {
+      throw error;
+    }
+
+    return data;
+  } catch (error) {
+    logSupabaseError('Unable to fetch product from Supabase:', error);
+    throw new Error('Unable to load product.');
+  }
+}
+
 export async function getLatestVideoLogs(limit: number): Promise<VideoLog[]> {
   try {
     const supabase = getServerClient();

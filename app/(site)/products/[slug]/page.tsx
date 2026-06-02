@@ -5,7 +5,7 @@ import type { Metadata } from 'next';
 import { PurchaseButton } from '@/components/product-detail/PurchaseButton';
 import { VideoPlayer } from '@/components/product-detail/VideoPlayer';
 import { ButtonLink } from '@/components/ui/button';
-import { getActiveProducts, getProductBySlug } from '@/lib/data/products';
+import { getProductBySlug, getProducts } from '@/lib/supabase/queries';
 import { formatPrice, type Product } from '@/lib/types';
 
 interface ProductPageProps {
@@ -20,14 +20,26 @@ const typeLabels: Record<Product['product_type'], string> = {
   custom: 'Custom build',
 };
 
-export function generateStaticParams() {
-  return getActiveProducts().map((product) => ({
-    slug: product.slug,
-  }));
+export async function generateStaticParams() {
+  try {
+    const products = await getProducts();
+
+    return products.map((product) => ({
+      slug: product.slug,
+    }));
+  } catch {
+    return [];
+  }
 }
 
-export function generateMetadata({ params }: ProductPageProps): Metadata {
-  const product = getProductBySlug(params.slug);
+export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
+  let product: Product | null = null;
+
+  try {
+    product = await getProductBySlug(params.slug);
+  } catch {
+    product = null;
+  }
 
   if (!product) {
     return {
@@ -41,8 +53,8 @@ export function generateMetadata({ params }: ProductPageProps): Metadata {
   };
 }
 
-export default function ProductDetailPage({ params }: ProductPageProps) {
-  const product = getProductBySlug(params.slug);
+export default async function ProductDetailPage({ params }: ProductPageProps) {
+  const product = await getProductBySlug(params.slug);
 
   if (!product) {
     notFound();
@@ -76,9 +88,17 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
               {formatPrice(product.price, product.is_subscription, product.billing_interval)}
             </p>
             <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-start">
-              <PurchaseButton product={product} />
+              <PurchaseButton
+                stripe_link={product.stripe_link}
+                stripe_price_id={product.stripe_price_id}
+              />
               {product.demo_url ? (
-                <ButtonLink href={product.demo_url} target="_blank" variant="ghost">
+                <ButtonLink
+                  href={product.demo_url}
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  variant="ghost"
+                >
                   View demo
                 </ButtonLink>
               ) : null}
@@ -114,9 +134,11 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-6 pb-16 lg:px-8" aria-label="Product video">
-        <VideoPlayer demoUrl={product.demo_url} title={product.name} videoUrl={product.demo_video_url} />
-      </section>
+      {product.demo_video_url ? (
+        <section className="mx-auto max-w-7xl px-6 pb-16 lg:px-8" aria-label="Product video">
+          <VideoPlayer title={product.name} videoUrl={product.demo_video_url} />
+        </section>
+      ) : null}
     </>
   );
 }
