@@ -157,3 +157,24 @@ export async function getLatestVideoLogs(limit: number): Promise<VideoLog[]> {
     throw new Error('Unable to load video logs.');
   }
 }
+
+export async function getAllVideoLogs(): Promise<VideoLog[]> {
+  try {
+    const supabase = getServerClient();
+    const { data, error } = await supabase
+      .from('video_logs')
+      .select(videoLogColumns)
+      .eq('is_active', true)
+      .order('order_index', { ascending: true })
+      .overrideTypes<VideoLog[], { merge: false }>();
+
+    if (error) {
+      throw error;
+    }
+
+    return data ?? [];
+  } catch (error) {
+    logSupabaseError('Unable to fetch all video logs from Supabase:', error);
+    throw new Error('Unable to load video logs.');
+  }
+}
