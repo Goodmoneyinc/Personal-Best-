@@ -6,13 +6,17 @@ import { getStripeServerClient } from '@/lib/stripe/server';
 export const runtime = 'nodejs';
 
 type CheckoutPayload = {
-  productId?: string;
-  priceId?: string;
+  productId: string;
   quantity?: number;
 };
 
 function isCheckoutPayload(value: unknown): value is CheckoutPayload {
-  return typeof value === 'object' && value !== null;
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    'productId' in value &&
+    typeof value.productId === 'string'
+  );
 }
 
 export async function POST(request: NextRequest) {
@@ -32,10 +36,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid checkout request.' }, { status: 400 });
     }
 
-    const product = body.productId
-      ? getActiveProducts().find((item) => item.id === body.productId)
-      : undefined;
-    const priceId = body.priceId ?? product?.stripe_price_id ?? undefined;
+    const product = getActiveProducts().find((item) => item.id === body.productId);
+
+    if (!product) {
+      return NextResponse.json({ error: 'Product not found.' }, { status: 404 });
+    }
+
+    const priceId = product.stripe_price_id?.trim();
 
     if (!priceId) {
       return NextResponse.json(
@@ -44,7 +51,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const origin = process.env.NEXT_PUBLIC_SITE_URL ?? request.nextUrl.origin;
+    const origin = (process.env.NEXT_PUBLIC_SITE_URL?.trim() || request.nextUrl.origin).replace(
+      /\/+$/,
+      '',
+    );
     const quantity =
       Number.isInteger(body.quantity) && body.quantity && body.quantity > 0
         ? body.quantity
@@ -58,13 +68,21 @@ export async function POST(request: NextRequest) {
           quantity,
         },
       ],
+      client_reference_id: product.id,
       metadata: {
-        product_id: product?.id ?? '',
-        product_slug: product?.slug ?? '',
+        product_id: product.id,
+        product_slug: product.slug,
       },
-      success_url: `${origin}/products/${product?.slug ?? ''}?checkout=success`,
-      cancel_url: `${origin}/products/${product?.slug ?? ''}?checkout=cancelled`,
+      success_url: `${origin}/products/${product.slug}?checkout=success`,
+      cancel_url: `${origin}/products/${product.slug}?checkout=cancelled`,
     });
+
+    if (!session.url) {
+      return NextResponse.json(
+        { error: 'Stripe did not return a checkout URL.' },
+        { status: 502 },
+      );
+    }
 
     return NextResponse.json({ url: session.url });
   } catch (error) {

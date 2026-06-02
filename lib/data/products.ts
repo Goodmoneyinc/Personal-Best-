@@ -1,5 +1,18 @@
 import type { CaseStudy, Product, VideoLog } from '@/lib/types';
 
+const stripePriceEnvByProductId = {
+  'delta-booking-kit': 'STRIPE_PRICE_DELTA_BOOKING_KIT',
+  'main-street-commerce': 'STRIPE_PRICE_MAIN_STREET_COMMERCE',
+  'magnolia-client-portal': 'STRIPE_PRICE_MAGNOLIA_CLIENT_PORTAL',
+  'county-launch-page': 'STRIPE_PRICE_COUNTY_LAUNCH_PAGE',
+} as const;
+
+function getStripePriceId(productId: keyof typeof stripePriceEnvByProductId) {
+  const value = process.env[stripePriceEnvByProductId[productId]]?.trim();
+
+  return value ? value : null;
+}
+
 export const products: Product[] = [
   {
     id: 'delta-booking-kit',
@@ -15,7 +28,7 @@ export const products: Product[] = [
     image_url: '/marketplace/delta-booking-kit.svg',
     demo_url: 'https://example.com/demo/delta-booking-kit',
     demo_video_url: null,
-    stripe_price_id: null,
+    stripe_price_id: getStripePriceId('delta-booking-kit'),
     stripe_link: null,
     features: [
       'Mobile-first booking request page',
@@ -45,7 +58,7 @@ export const products: Product[] = [
     image_url: '/marketplace/main-street-commerce.svg',
     demo_url: 'https://example.com/demo/main-street-commerce',
     demo_video_url: null,
-    stripe_price_id: null,
+    stripe_price_id: getStripePriceId('main-street-commerce'),
     stripe_link: null,
     features: [
       'Featured product and collection sections',
@@ -74,7 +87,7 @@ export const products: Product[] = [
     image_url: '/marketplace/magnolia-client-portal.svg',
     demo_url: null,
     demo_video_url: null,
-    stripe_price_id: null,
+    stripe_price_id: getStripePriceId('magnolia-client-portal'),
     stripe_link: null,
     features: [
       'Discovery-led workflow mapping',
@@ -103,7 +116,7 @@ export const products: Product[] = [
     image_url: '/marketplace/county-launch-page.svg',
     demo_url: 'https://example.com/demo/county-launch-page',
     demo_video_url: null,
-    stripe_price_id: null,
+    stripe_price_id: getStripePriceId('county-launch-page'),
     stripe_link: null,
     features: [
       'Hero, timeline, FAQ, and sponsor sections',
