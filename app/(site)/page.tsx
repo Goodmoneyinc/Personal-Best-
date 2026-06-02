@@ -1,19 +1,20 @@
-import { BuildLogPreview } from '@/components/home/BuildLogPreview';
-import { ContactCTA } from '@/components/home/ContactCTA';
-import { FeaturedProducts } from '@/components/home/FeaturedProducts';
-import { HeroSection } from '@/components/home/HeroSection';
-import { caseStudies, getFeaturedProducts, videoLogs } from '@/lib/data/products';
+import { Suspense } from 'react';
 
-const featuredProducts = getFeaturedProducts();
-const featuredCaseStudy = caseStudies.find((study) => study.featured);
-const featuredVideo = videoLogs.find((video) => video.is_active);
+import { BuildLogPreview, BuildLogPreviewSkeleton } from '@/components/home/BuildLogPreview';
+import { ContactCTA } from '@/components/home/ContactCTA';
+import { FeaturedProducts, FeaturedProductsSkeleton } from '@/components/home/FeaturedProducts';
+import { HeroSection } from '@/components/home/HeroSection';
 
 export default function HomePage() {
   return (
     <>
       <HeroSection />
-      <FeaturedProducts products={featuredProducts} />
-      <BuildLogPreview caseStudy={featuredCaseStudy} video={featuredVideo} />
+      <Suspense fallback={<FeaturedProductsSkeleton />}>
+        <FeaturedProducts />
+      </Suspense>
+      <Suspense fallback={<BuildLogPreviewSkeleton />}>
+        <BuildLogPreview />
+      </Suspense>
       <ContactCTA />
     </>
   );

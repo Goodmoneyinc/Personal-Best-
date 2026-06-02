@@ -36,6 +36,16 @@ export function VideoCard({ entry }: VideoCardProps) {
           >
             Watch walkthrough
           </Link>
+          {entry.tiktok_url ? (
+            <Link
+              className="rounded-full border border-gold/50 bg-gold/20 px-4 py-2 text-sm font-bold text-[#6F5921] transition hover:-translate-y-0.5 hover:border-gold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
+              href={entry.tiktok_url}
+              rel="noreferrer"
+              target="_blank"
+            >
+              Watch on TikTok
+            </Link>
+          ) : null}
           {entry.product ? (
             <Link
               className="rounded-full border border-navy/20 bg-white px-4 py-2 text-sm font-semibold text-navy transition hover:-translate-y-0.5 hover:border-gold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
