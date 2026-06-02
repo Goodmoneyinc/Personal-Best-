@@ -23,7 +23,7 @@ export default function ContactPage() {
           </p>
         </div>
       </section>
-      <section aria-labelledby="contact-form-title" className="mx-auto grid max-w-7xl gap-10 px-6 py-16 lg:grid-cols-[0.75fr_1.25fr] lg:px-8">
+      <section aria-labelledby="contact-form-title" className="mx-auto grid max-w-7xl gap-10 px-6 py-16 lg:grid-cols-[0.8fr_1.2fr] lg:px-8">
         <div>
           <p className="text-sm font-bold uppercase tracking-[0.22em] text-[#6F5921]">
             Project notes
@@ -36,6 +36,45 @@ export default function ContactPage() {
             portals, launch pages, and operational dashboards for Mississippi
             teams.
           </p>
+          <p className="mt-4 text-base leading-7 text-ink/75">
+            Use the intake form for project requests, or reach out directly if
+            you want to compare options before choosing a scope.
+          </p>
+          <div className="mt-8 rounded-[2rem] border border-navy/10 bg-white/80 p-6 shadow-card">
+            <h3 className="font-display text-2xl font-bold text-navy">
+              Contact Fulatelier
+            </h3>
+            <ul className="mt-5 space-y-3 text-sm font-semibold text-navy">
+              <li>
+                <a
+                  className="rounded-sm underline decoration-gold decoration-2 underline-offset-4 hover:text-[#6F5921] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
+                  href="mailto:hello@fulatelier.com"
+                >
+                  hello@fulatelier.com
+                </a>
+              </li>
+              <li>
+                <a
+                  className="rounded-sm underline decoration-gold decoration-2 underline-offset-4 hover:text-[#6F5921] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
+                  href="https://www.tiktok.com/@fulatelier"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  TikTok build notes
+                </a>
+              </li>
+              <li>
+                <a
+                  className="rounded-sm underline decoration-gold decoration-2 underline-offset-4 hover:text-[#6F5921] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
+                  href="https://www.instagram.com/fulatelier"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  Instagram workshop updates
+                </a>
+              </li>
+            </ul>
+          </div>
           <div className="mt-8 rounded-[2rem] border border-navy/10 bg-white/80 p-6 shadow-card">
             <h3 className="font-display text-2xl font-bold text-navy">
               Useful details to include
@@ -47,7 +86,9 @@ export default function ContactPage() {
             </ul>
           </div>
         </div>
-        <LeadCaptureForm />
+        <div>
+          <LeadCaptureForm />
+        </div>
       </section>
     </>
   );

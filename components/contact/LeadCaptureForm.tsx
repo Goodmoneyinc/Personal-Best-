@@ -1,6 +1,6 @@
 'use client';
 
-import { FormEvent, useState } from 'react';
+import { type ChangeEvent, type FormEvent, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,32 +8,102 @@ import { Select } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { getSupabaseBrowserClient } from '@/lib/supabase/client';
 
-type SubmitState = 'idle' | 'submitting' | 'success' | 'error';
+type FormStatus = 'idle' | 'submitting' | 'success' | 'error';
 
-function getFormValue(formData: FormData, key: string) {
-  const value = formData.get(key);
-  return typeof value === 'string' ? value.trim() : '';
+interface LeadFormValues {
+  name: string;
+  email: string;
+  phone: string;
+  company: string;
+  project_details: string;
+  budget_range: string;
+  timeline: string;
+}
+
+const initialValues: LeadFormValues = {
+  name: '',
+  email: '',
+  phone: '',
+  company: '',
+  project_details: '',
+  budget_range: '',
+  timeline: '',
+};
+
+function getTrimmedValues(values: LeadFormValues): LeadFormValues {
+  return {
+    name: values.name.trim(),
+    email: values.email.trim(),
+    phone: values.phone.trim(),
+    company: values.company.trim(),
+    project_details: values.project_details.trim(),
+    budget_range: values.budget_range,
+    timeline: values.timeline,
+  };
+}
+
+function getValidationMessage(values: LeadFormValues) {
+  if (!values.name) {
+    return 'Please enter your name.';
+  }
+
+  if (!values.email) {
+    return 'Please enter your email address.';
+  }
+
+  if (!values.project_details) {
+    return 'Please describe the project you need help with.';
+  }
+
+  if (values.project_details.length < 20) {
+    return 'Project details must be at least 20 characters.';
+  }
+
+  return '';
 }
 
 export function LeadCaptureForm() {
-  const [submitState, setSubmitState] = useState<SubmitState>('idle');
+  const [values, setValues] = useState<LeadFormValues>(initialValues);
+  const [status, setStatus] = useState<FormStatus>('idle');
   const [message, setMessage] = useState('');
+
+  const isSubmitting = status === 'submitting';
+
+  function handleInputChange(
+    event: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
+  ) {
+    const { name, value } = event.target;
+
+    setValues((currentValues) => ({
+      ...currentValues,
+      [name]: value,
+    }));
+  }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setSubmitState('submitting');
-    setMessage('Sending your project details...');
 
-    const formData = new FormData(event.currentTarget);
+    const trimmedValues = getTrimmedValues(values);
+    const validationMessage = getValidationMessage(trimmedValues);
+
+    if (validationMessage) {
+      setStatus('error');
+      setMessage(validationMessage);
+      return;
+    }
+
+    setStatus('submitting');
+    setMessage('');
+
     const payload = {
-      name: getFormValue(formData, 'name'),
-      email: getFormValue(formData, 'email'),
-      phone: getFormValue(formData, 'phone') || null,
-      company: getFormValue(formData, 'company') || null,
-      project_details: getFormValue(formData, 'project_details'),
-      budget_range: getFormValue(formData, 'budget_range') || null,
-      timeline: getFormValue(formData, 'timeline') || null,
-      source: 'website-contact',
+      name: trimmedValues.name,
+      email: trimmedValues.email,
+      phone: trimmedValues.phone || null,
+      company: trimmedValues.company || null,
+      project_details: trimmedValues.project_details,
+      budget_range: trimmedValues.budget_range || null,
+      timeline: trimmedValues.timeline || null,
+      source: 'website',
       status: 'new' as const,
       email_sent: false,
     };
@@ -51,15 +121,15 @@ export function LeadCaptureForm() {
         throw error;
       }
 
-      event.currentTarget.reset();
-      setSubmitState('success');
-      setMessage('Thanks. Fulatelier will review your project details and follow up.');
+      setValues(initialValues);
+      setStatus('success');
+      setMessage('Thanks. Fulatelier received your project details and will follow up soon.');
     } catch (error) {
-      setSubmitState('error');
+      setStatus('error');
       setMessage(
         error instanceof Error
-          ? error.message
-          : 'Something went wrong while sending your inquiry.',
+          ? `Unable to send your inquiry: ${error.message}`
+          : 'Unable to send your inquiry. Please try again or email Fulatelier directly.',
       );
     }
   }
@@ -74,48 +144,94 @@ export function LeadCaptureForm() {
           <label className="text-sm font-semibold text-navy" htmlFor="name">
             Name
           </label>
-          <Input id="name" name="name" required type="text" />
+          <Input
+            autoComplete="name"
+            disabled={isSubmitting}
+            id="name"
+            name="name"
+            onChange={handleInputChange}
+            required
+            type="text"
+            value={values.name}
+          />
         </div>
         <div>
           <label className="text-sm font-semibold text-navy" htmlFor="email">
             Email
           </label>
-          <Input id="email" name="email" required type="email" />
+          <Input
+            autoComplete="email"
+            disabled={isSubmitting}
+            id="email"
+            name="email"
+            onChange={handleInputChange}
+            required
+            type="email"
+            value={values.email}
+          />
         </div>
         <div>
           <label className="text-sm font-semibold text-navy" htmlFor="phone">
             Phone
           </label>
-          <Input id="phone" name="phone" type="tel" />
+          <Input
+            autoComplete="tel"
+            disabled={isSubmitting}
+            id="phone"
+            name="phone"
+            onChange={handleInputChange}
+            type="tel"
+            value={values.phone}
+          />
         </div>
         <div>
           <label className="text-sm font-semibold text-navy" htmlFor="company">
             Company or organization
           </label>
-          <Input id="company" name="company" type="text" />
+          <Input
+            autoComplete="organization"
+            disabled={isSubmitting}
+            id="company"
+            name="company"
+            onChange={handleInputChange}
+            type="text"
+            value={values.company}
+          />
         </div>
         <div>
           <label className="text-sm font-semibold text-navy" htmlFor="budget_range">
             Budget range
           </label>
-          <Select id="budget_range" name="budget_range">
+          <Select
+            disabled={isSubmitting}
+            id="budget_range"
+            name="budget_range"
+            onChange={handleInputChange}
+            value={values.budget_range}
+          >
             <option value="">Select a range</option>
-            <option value="$500-$1,500">$500-$1,500</option>
-            <option value="$1,500-$5,000">$1,500-$5,000</option>
-            <option value="$5,000-$12,000">$5,000-$12,000</option>
-            <option value="$12,000+">$12,000+</option>
+            <option value="Under $1k">Under $1k</option>
+            <option value="$1k–$5k">$1k–$5k</option>
+            <option value="$5k–$15k">$5k–$15k</option>
+            <option value="$15k+">$15k+</option>
           </Select>
         </div>
         <div>
           <label className="text-sm font-semibold text-navy" htmlFor="timeline">
             Ideal timeline
           </label>
-          <Select id="timeline" name="timeline">
+          <Select
+            disabled={isSubmitting}
+            id="timeline"
+            name="timeline"
+            onChange={handleInputChange}
+            value={values.timeline}
+          >
             <option value="">Select a timeline</option>
-            <option value="This month">This month</option>
-            <option value="Next 60 days">Next 60 days</option>
-            <option value="This quarter">This quarter</option>
-            <option value="Exploring options">Exploring options</option>
+            <option value="ASAP">ASAP</option>
+            <option value="1–3 months">1–3 months</option>
+            <option value="3–6 months">3–6 months</option>
+            <option value="Flexible">Flexible</option>
           </Select>
         </div>
       </div>
@@ -123,22 +239,34 @@ export function LeadCaptureForm() {
         <label className="text-sm font-semibold text-navy" htmlFor="project_details">
           Project details
         </label>
-        <Textarea id="project_details" name="project_details" required />
+        <Textarea
+          disabled={isSubmitting}
+          id="project_details"
+          minLength={20}
+          name="project_details"
+          onChange={handleInputChange}
+          required
+          value={values.project_details}
+        />
       </div>
       <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <p
-          aria-live="polite"
-          className={
-            submitState === 'error'
-              ? 'text-sm font-semibold text-red-700'
-              : 'text-sm font-semibold text-ink/75'
-          }
-          role="status"
-        >
-          {message || 'Tell us what you need built, improved, or launched.'}
-        </p>
-        <Button disabled={submitState === 'submitting'} type="submit" variant="secondary">
-          {submitState === 'submitting' ? 'Sending...' : 'Send inquiry'}
+        <div className="min-h-6">
+          {status === 'error' ? (
+            <p className="text-sm font-semibold text-red-700" role="alert">
+              {message}
+            </p>
+          ) : (
+            <p
+              aria-live="polite"
+              className="text-sm font-semibold text-ink/75"
+              role={status === 'success' ? 'status' : undefined}
+            >
+              {message || 'Tell us what you need built, improved, or launched.'}
+            </p>
+          )}
+        </div>
+        <Button aria-busy={isSubmitting} disabled={isSubmitting} type="submit" variant="secondary">
+          {isSubmitting ? 'Sending...' : 'Send inquiry'}
         </Button>
       </div>
     </form>
